@@ -12,7 +12,6 @@
 00:50:16 "Level of Concern"
 00:52:17 "Ride"
 00:56:22 "Car Radio"
-1:02:34 "Tyler Crowd Surfs Back to Stage"
-1:05:20 "Stressed Out"
+1:01:52 "Stressed Out"
 1:09:08 "Shy Away"
 1:14:13 "Trees"

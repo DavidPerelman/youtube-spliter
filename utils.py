@@ -4,8 +4,18 @@ from moviepy.editor import VideoFileClip
 
 def move_directory(source_dir, destination_dir):
     try:
-        # Move the directory and its contents to the destination directory
-        shutil.move(source_dir, destination_dir)
+        # Create the output folder if it doesn't exist
+        os.makedirs('download', exist_ok=True)
+
+        # fetch all files
+        for file_name in os.listdir(source_dir):
+            # construct full file path
+            source = source_dir + file_name
+            print(source)
+            destination = destination_dir + file_name
+            # move only files
+            if os.path.isfile(source):
+                shutil.move(source, destination)
     except Exception as e:
         print(f"Error: {e}")
 
@@ -75,7 +85,9 @@ def create_chapters_data(text_content, video_length):
 def split_audio_files(video_name, chapters_data, video_path):
     try:
         # Create the output folder if it doesn't exist
-        os.makedirs(video_name, exist_ok=True)
+        os.makedirs(r'download\{}'.format(video_name), exist_ok=True)
+
+        os.makedirs('audio_files', exist_ok=True)
 
         # Loop through the lists and create subclips
         for idx, (start, end, title) in enumerate(zip(chapters_data['start'], chapters_data['end'], chapters_data['title']), start=1):
@@ -90,16 +102,7 @@ def split_audio_files(video_name, chapters_data, video_path):
             audio_clip = sub_clip.audio
 
             # Write subclip with title as filename
-            audio_clip.write_audiofile(os.path.join(video_name, f'{idx:02d} {title}.mp3'))
-
-        # Example source and destination directories
-        source_directory = video_name
-        destination_directory = r'{}\download\{}'.format(os.getcwd(), video_name)
-
-        # Move the directory
-        move_directory(source_directory, destination_directory)
-
-        return True
+            audio_clip.write_audiofile(os.path.join(r'download\{}'.format(video_name), f'{idx:02d} {title}.mp3'))
     except OSError:
         # Ignore OSError
         pass

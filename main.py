@@ -1,6 +1,6 @@
 import os
 from download_video import startDownload
-from utils import create_audio, create_captures_data, get_video_length, read_text, split_audio_files
+from utils import create_audio, create_chapters_data, get_video_length, read_text, split_audio_files
 
 software_path = os.getcwd()
 
@@ -9,7 +9,12 @@ software_path = os.getcwd()
 # video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
 
 # לילה כיום יאיר
-video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
+# video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
+
+# Twenty One Pilots - Live at Southside Music Festival (Full Set)
+video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
+
+# video_url = 'https://www.youtube.com/watch?v=lc4BL2adPeo'
 
 try:
     print("\nDownloading...")
@@ -17,28 +22,26 @@ try:
     # Download video
     video_path = startDownload(video_url)
 
-    text_dir = os.listdir('./text_files') 
+    video_name = os.path.basename(video_path[:-4])
 
-    # Checking if the text directory is empty or not 
+    print(video_name)
+    text_dir = os.listdir('./chapters_files') 
+
+    # # Checking if the text directory is empty or not 
     if len(text_dir) == 0: 
         create_audio(video_path) 
     else: 
-        captures_file_name = r'{}\text_files\{}'.format(os.getcwd(), text_dir[0])
+        text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
 
-        file_size = os.stat(captures_file_name).st_size
-
-        if file_size > 0:
-            text_path = r'{}\text_files\captures.txt'.format(software_path)
-
-            text = read_text(text_path)
+        text = read_text(text_path)
             
-            text_content = r"""" {} """.format(text)
+        text_content = r""" {} """.format(text)
 
-            video_length = get_video_length(video_path)
+        video_length = get_video_length(video_path)
 
-            captures_data = create_captures_data(text_content, video_length)
+        chapters_data = create_chapters_data(text_content, video_length)
 
-            done = split_audio_files(captures_data, video_path)
+        done = split_audio_files(video_name, chapters_data, video_path)
 except OSError:
     # Ignore OSError
     pass

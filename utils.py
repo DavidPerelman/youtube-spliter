@@ -1,8 +1,6 @@
 import os
 from moviepy.editor import VideoFileClip
 
-output_folder = 'audio_files'
-
 def get_video_length(filename):
     # Load the video clip
     clip = VideoFileClip(filename)
@@ -71,7 +69,7 @@ def create_captures_data(text_content, video_length):
 
 def split_audio_files(captures_data, video_path):
     # Create the output folder if it doesn't exist
-    os.makedirs(output_folder, exist_ok=True)
+    os.makedirs('audio_files', exist_ok=True)
 
     # Loop through the lists and create subclips
     for idx, (start, end, title) in enumerate(zip(captures_data['start'], captures_data['end'], captures_data['title']), start=1):
@@ -86,13 +84,13 @@ def split_audio_files(captures_data, video_path):
         audio_clip = sub_clip.audio
 
         # Write subclip with title as filename
-        audio_clip.write_audiofile(os.path.join(output_folder, f'{idx:02d} {title}.mp3'))
+        audio_clip.write_audiofile(os.path.join('audio_files', f'{idx:02d} {title}.mp3'))
 
     return True
 
 def create_audio(video_path):
     # Create the output folder if it doesn't exist
-    os.makedirs(output_folder, exist_ok=True)
+    os.makedirs('audio_files', exist_ok=True)
 
     # Get subclip
     sub_clip = VideoFileClip(video_path)
@@ -103,4 +101,4 @@ def create_audio(video_path):
     title = os.path.basename(video_path[:-4])
 
     # Write subclip with title as filename
-    audio_clip.write_audiofile(os.path.join(output_folder, f'{title}.mp3'))
+    audio_clip.write_audiofile(os.path.join('audio_files', f'{title}.mp3'))

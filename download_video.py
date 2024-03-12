@@ -1,7 +1,10 @@
+import os
 from pytube import YouTube
 
 def startDownload(video_url):
     try:
+        # Create the output folder if it doesn't exist
+        os.makedirs('download', exist_ok=True)
         # Create a YouTube object
         yt = YouTube(video_url)
 

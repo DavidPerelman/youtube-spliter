@@ -1,8 +1,7 @@
 import os
 from download_video import startDownload
 from extract_chapters_from_description import add_end_timestamp, extract_chapters_from_description, get_desc
-from utils import add_tags, create_audio, create_chapters_data, get_video_length, read_text, split_audio_files
-from pytube import YouTube
+from utils import create_audio, create_chapters_data, get_video_length, read_text, split_audio_files
 
 software_path = os.getcwd()
 

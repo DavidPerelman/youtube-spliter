@@ -7,13 +7,23 @@ def get_desc(url):
     desc = youtube.initial_data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1]['videoSecondaryInfoRenderer']['attributedDescription']['content']
     return desc
 
-def search_description(video_url):
-    # Create a YouTube object
-    youtube = YouTube(video_url)
+timestamp_pattern = re.compile(r"\d+:\d+")
 
-    stream = youtube.streams.first()
-
-    print(youtube.description)
+def split_line(line):
+    # Find the timestamp in the line
+    match = re.search(timestamp_pattern, line)
+    if(len(match.group()) == 5):
+        timestamp = match.group()
+        title = line.replace(timestamp, "").strip()
+        return {"timestamp_start": timestamp, "title": title}
+    if(len(match.group()) == 4):
+        match = re.search(re.compile(r"\d+:\d+:\d+"), line)
+        timestamp = match.group()
+        # Remove the timestamp from the line to get the title
+        title = line.replace(timestamp, "").strip()
+        return {"timestamp_start": timestamp, "title": title}
+    else:
+        return None
     
 def extract_chapters_from_description(description):
     chapters = []
@@ -22,39 +32,60 @@ def extract_chapters_from_description(description):
     lines = description.split("\n")
     
     # Define regex pattern to match time stamps
-    time_pattern = re.compile(r"\d+:\d+:\d+")
+    time_pattern_1 = re.compile(r"\d+:\d+")
+    time_pattern_2 = re.compile(r"\d+:\d+:\d+")
     
     for line in lines:
         # Search for time stamps in the line
-        matches = re.findall(time_pattern, line)
+        matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
         if matches:
-            # Extract time stamp and chapter title
-            timestamp = matches[0]
-            title = line.replace(timestamp, "").strip()
-            chapters.append({"timestamp": timestamp, "title": title})
-    
+            split_line(line)
+            result = split_line(line)
+            chapters.append(result)
     return chapters
 
-# # Example usage
-# description = """00:00:00 "Heathens"
-# 00:03:26 "Morph"
-# 00:05:22 "Holding on to You"
-# 00:07:54 "The Outside"
-# 00:13:45 "Lane Boy"
-# 00:17:17 "Chlorine"
-# 00:21:40 "Mulberry Street"
-# 00:27:01 "Campfire Set"
-# 00:37:26 "Jumpsuit"
-# 00:41:12 "Heavydirtysoul"
-# 00:44:50 "Saturday"
-# 00:50:16 "Level of Concern"
-# 00:52:17 "Ride"
-# 00:56:22 "Car Radio"
-# 1:01:52 "Stressed Out"
-# 1:09:08 "Shy Away"
-# 1:14:13 "Trees"
-# """
+def add_end_timestamp(timestamps, video_length):
+    chapters = []
+    # Loop through the list
+    for i in range(len(timestamps) - 1):
+        timestamps[i]['timestamp_end'] = timestamps[i + 1]['timestamp_start']
 
-# chapters = extract_chapters_from_description(description)
-# for chapter in chapters:
-#     print(chapter)
+    # Set 'timestamp_end' of the last item to None
+    timestamps[-1]['timestamp_end'] = None
+
+    # Print the updated list
+    for item in timestamps:
+        chapters.append(item)
+
+    first_item = chapters[0]
+    first_item["timestamp_start"] = '00:00'
+
+    last_item = chapters[-1]
+    last_item["timestamp_end"] = video_length
+
+    for chapter in chapters:
+        if len(chapter['timestamp_start']) == 5:
+            chapter['timestamp_start'] = f"00:{chapter['timestamp_start']}"
+        if len(chapter['timestamp_end']) == 5:
+            chapter['timestamp_end'] = f"00:{chapter['timestamp_end']}"
+        if len(chapter['timestamp_start']) == 7:
+            chapter['timestamp_start'] = f"0{chapter['timestamp_start']}"
+        if len(chapter['timestamp_end']) == 7:
+            chapter['timestamp_end'] = f"0{chapter['timestamp_end']}"
+
+    start_times = []
+    end_times = []
+    titles = []
+        
+    for chapter in chapters:
+        start_times.append(chapter['timestamp_start'])
+        end_times.append(chapter['timestamp_end'])
+        titles.append(chapter['title'])
+
+    chapters_data = {
+        'start': start_times,
+        'end': end_times,
+        'title': titles,
+    }
+
+    return chapters_data

@@ -1,5 +1,4 @@
 import os
-import shutil
 import eyed3
 from moviepy.editor import VideoFileClip
 
@@ -20,6 +19,7 @@ def add_tags(input_dir, album_name, artist_name, recording_date):
         print(f"Error: {e}")
 
 def get_video_length(filename):
+    print('get_video_length')
     # Load the video clip
     clip = VideoFileClip(filename)
     

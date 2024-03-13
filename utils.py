@@ -2,7 +2,20 @@ import re
 import os
 import eyed3
 from moviepy.editor import VideoFileClip
-from extract_chapters_from_description import split_line
+from pytube import YouTube
+
+def get_desc(url):
+    youtube = YouTube(url)
+    stream = youtube.streams.first()
+    desc = youtube.initial_data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1]['videoSecondaryInfoRenderer']
+    if len(desc) > 0:
+        if 'attributedDescription' in list(desc):
+            desc = desc['attributedDescription']['content']
+            return desc
+        else:
+            return []
+        
+timestamp_pattern = re.compile(r"\d+:\d+")
 
 def export_data(lines, start_times, titles, end_times, video_length):
     # Define regex pattern to match time stamps

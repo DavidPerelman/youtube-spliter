@@ -1,16 +1,16 @@
 import os
 from download_video import startDownload
-from extract_chapters_from_description import create_timestamp, extract_chapters_from_description, get_desc
-from utils import create_audio, create_chapters_data, get_video_length, read_text, split_audio_files
+# from extract_chapters_from_description import get_desc
+from utils import create_audio, create_chapters_data, get_video_length, read_text, split_audio_files, get_desc
 
 software_path = os.getcwd()
 
 # YouTube video URL
 # David Gilmour in Concert Meltdown 2001/2002
-video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
+# video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
 
 # לילה כיום יאיר
-# video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
+video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
 
 # Twenty One Pilots - Live at Southside Music Festival (Full Set)
 # video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
@@ -46,10 +46,8 @@ try:
     description = get_desc(video_url)
     
     if len(description) > 0:
-        chapters = create_chapters_data(description, video_length, 'description')
         # # # Get video chapters from description
-        # chapters = extract_chapters_from_description(description)
-
+        chapters = create_chapters_data(description, video_length, 'description')
         # # # Checking if the video chapters from description is empty or not 
         if len(chapters['start'] or chapters['end'] or chapters['title']) > 0:
                 done = split_audio_files(artist_name, album_name, recording_date, chapters, video_path)
@@ -68,8 +66,7 @@ try:
                 done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
             else: 
             # # # Create single audio file
-                print('video_path')
-                # create_audio(video_path) 
+                create_audio(video_path) 
     # # # Checking if the text directory is empty or not 
     elif len(text_dir) > 0: 
         # # # Checking if the text chapters belongs to the video 
@@ -84,9 +81,8 @@ try:
             
             done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
         else: 
-            print('create_audio')
             # # # Create single audio file
-            # create_audio(video_path) 
+            create_audio(video_path) 
 except OSError:
     # Ignore OSError
     pass

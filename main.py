@@ -1,7 +1,8 @@
 import os
+import pathlib
 from download_video import startDownload
-# from extract_chapters_from_description import get_desc
 from utils import create_audio, create_chapters_data, get_video_length, read_text, split_audio_files, get_desc
+# from langdetect import detect
 
 software_path = os.getcwd()
 
@@ -19,14 +20,24 @@ video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
 # video_url = 'https://www.youtube.com/watch?v=36GNdaxlA0k'
 
 try:
-    video_url = video_url
-    album_name = 'Live at Southside Music Festival'.title()
-    artist_name = 'Twenty One Pilots'.title()
-    recording_date = 2022
     # video_url = input('Enter youtube link: ')
     # album_name = input('Enter album name: ').title()
     # artist_name = input('Enter artist: ').title()
     # recording_date = input('Enter recording year: ')
+    
+    video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
+    album_name = 'fdfdf'.title()
+    artist_name = 'fdfd'.title()
+    recording_date = 2002
+
+    # album_name_lang_check = detect(album_name)
+    # artist_name_lang_check = detect(artist_name)
+
+    # if album_name_lang_check != 'he':
+    #     album_name.title()
+
+    # if artist_name_lang_check != 'he':
+    #     artist_name.title()
 
     print("\nDownloading...")
 
@@ -50,7 +61,7 @@ try:
         chapters = create_chapters_data(description, video_length, 'description')
         # # # Checking if the video chapters from description is empty or not 
         if len(chapters['start'] or chapters['end'] or chapters['title']) > 0:
-                done = split_audio_files(artist_name, album_name, recording_date, chapters, video_path)
+            done = split_audio_files(artist_name, album_name, recording_date, chapters, video_path)
         # # # Checking if the text directory is empty or not 
         elif len(text_dir) > 0: 
         # # # Checking if the text chapters belongs to the video 
@@ -66,7 +77,7 @@ try:
                 done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
             else: 
             # # # Create single audio file
-                create_audio(video_path) 
+                create_audio(artist_name, album_name, recording_date, video_path) 
     # # # Checking if the text directory is empty or not 
     elif len(text_dir) > 0: 
         # # # Checking if the text chapters belongs to the video 
@@ -82,7 +93,9 @@ try:
             done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
         else: 
             # # # Create single audio file
-            create_audio(video_path) 
+            create_audio(artist_name, album_name, recording_date, video_path) 
+
+    print('Done!')
 except OSError:
     # Ignore OSError
     pass

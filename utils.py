@@ -17,18 +17,19 @@ def get_desc(url):
         
 timestamp_pattern = re.compile(r"\d+:\d+")
 
-def export_data(lines, start_times, titles, end_times, video_length):
-    # Define regex pattern to match time stamps
-        time_pattern_1 = re.compile(r"\d+:\d+")
-        time_pattern_2 = re.compile(r"\d+:\d+:\d+")
+def export_data(start_times, titles, end_times, video_length):
 
-        for line in lines:
-        # Search for time stamps in the line
-            matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
-            if matches:
-                data = split_line_to_data(line, video_length)
-                start_times.append(data['start_time'])
-                titles.append(data['title'])
+    # # Define regex pattern to match time stamps
+    #     time_pattern_1 = re.compile(r"\d+:\d+")
+    #     time_pattern_2 = re.compile(r"\d+:\d+:\d+")
+
+        # for line in lines:
+        # # Search for time stamps in the line
+        #     matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
+        #     if matches:
+        #         data = split_line_to_data(line, video_length)
+        #         start_times.append(data['start_time'])
+        #         titles.append(data['title'])
         
                 # Iterate over the start_times list
         for i in range(len(start_times)):
@@ -138,11 +139,11 @@ def create_chapters_data(text_content, video_length, type):
                 start_times.append(data['start_time'])
                 titles.append(data['title'])
 
-        chapters_data = export_data(lines, start_times, titles, end_times, video_length)
+        chapters_data = export_data(start_times, titles, end_times, video_length)
         return chapters_data
     
     if type == 'description':
-                # Define regex pattern to match time stamps
+        # Define regex pattern to match time stamps
         time_pattern_1 = re.compile(r"\d+:\d+")
         time_pattern_2 = re.compile(r"\d+:\d+:\d+")
     
@@ -154,7 +155,7 @@ def create_chapters_data(text_content, video_length, type):
                 start_times.append(data['start_time'])
                 titles.append(data['title'])
 
-        chapters_data = export_data(lines, start_times, titles, end_times, video_length)
+        chapters_data = export_data(start_times, titles, end_times, video_length)
         return chapters_data
 
 def split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path):
@@ -184,9 +185,11 @@ def split_audio_files(artist_name, album_name, recording_date, chapters_data, vi
         # Ignore OSError
         pass
 
-def create_audio(video_path):
+def create_audio(artist_name, album_name, recording_date, video_path):
     # Create the output folder if it doesn't exist
-    os.makedirs('download', exist_ok=True)
+    # folder_name = r'download\{}- {} ({})'.format(artist_name, album_name, recording_date)
+    folder_name = 'download'
+    os.makedirs(folder_name, exist_ok=True)
 
     # Get subclip
     sub_clip = VideoFileClip(video_path)
@@ -197,4 +200,6 @@ def create_audio(video_path):
     title = os.path.basename(video_path[:-4])
 
     # Write subclip with title as filename
-    audio_clip.write_audiofile(os.path.join('download', f'{title}.mp3'))
+    audio_clip.write_audiofile(os.path.join(folder_name, f'{title}.mp3'))
+
+    # add_tags(folder_name, album_name, artist_name, recording_date)

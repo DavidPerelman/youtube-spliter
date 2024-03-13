@@ -7,13 +7,13 @@ software_path = os.getcwd()
 
 # YouTube video URL
 # David Gilmour in Concert Meltdown 2001/2002
-# video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
+video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
 
 # לילה כיום יאיר
 # video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
 
 # Twenty One Pilots - Live at Southside Music Festival (Full Set)
-video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
+# video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
 
 # Arctic Monkeys - Glastonbury 2007 Live - Full Show Remastered HD
 # video_url = 'https://www.youtube.com/watch?v=36GNdaxlA0k'
@@ -52,33 +52,26 @@ try:
 
         # # # Checking if the video chapters from description is empty or not 
         if len(chapters['start'] or chapters['end'] or chapters['title']) > 0:
-                # chapters_data = create_timestamp(chapters, video_length)
-
-                print('chapters')
-                print(chapters)
-
-                # done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
+                done = split_audio_files(artist_name, album_name, recording_date, chapters, video_path)
         # # # Checking if the text directory is empty or not 
         elif len(text_dir) > 0: 
         # # # Checking if the text chapters belongs to the video 
             if f'{video_name}.txt' in text_dir:
-                print('video_name')
-                # text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
+                text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
 
-                # text = read_text(text_path)
+                text = read_text(text_path)
                     
-                # text_content = r""" {} """.format(text)
+                text_content = r""" {} """.format(text)
 
-                # chapters_data = create_chapters_data(text_content, video_length, 'text_file')
+                chapters_data = create_chapters_data(text_content, video_length, 'text_file')
 
-                # done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
+                done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
             else: 
             # # # Create single audio file
                 print('video_path')
                 # create_audio(video_path) 
     # # # Checking if the text directory is empty or not 
     elif len(text_dir) > 0: 
-        print('text_dir')
         # # # Checking if the text chapters belongs to the video 
         if f'{video_name}.txt' in text_dir:
             text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
@@ -88,7 +81,8 @@ try:
             text_content = r""" {} """.format(text)
 
             chapters_data = create_chapters_data(text_content, video_length, 'text_file')
-            # done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
+            
+            done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
         else: 
             print('create_audio')
             # # # Create single audio file

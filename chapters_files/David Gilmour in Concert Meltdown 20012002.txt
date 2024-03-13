@@ -1,15 +1,15 @@
-00:00:00   "Shine On You Crazy Diamond (Parts I–V)"
-00:10:25    "Terrapin"
-00:13:37     "Fat Old Sun"
-00: 17:07    "Coming Back to Life"
-00: 22:27     "High Hopes"
-00:30:26       "Smile"
- 00:38:37       "Wish You Were Here 
-00: 43:45        "Comfortably Numb (with Robert Wyatt)"
-00: 50:47        "Dimming of the Day"
-00:55:22        "Shine On You Crazy Diamond (Parts VI–VIII)"
-01: 01:41        "A Great Day for Freedom"
-01: 07:37        "Hushabye Mountain"
-01:10:00          "Dominoes"
-01:15:00           "Breakthrough (with Richard Wright)"
-01:22:37          "Comfortably Numb (with Bob Geldof)"
+00:00:00 Shine On You Crazy Diamond (Parts I-V)
+00:10:25 Terrapin
+00:13:37 Fat Old Sun
+00:17:07 Coming Back to Life
+00:22:27 High Hopes
+00:30:26 Smile
+00:38:37 Wish You Were Here 
+00:43:45 Comfortably Numb (with Robert Wyatt)
+00:50:47 Dimming of the Day
+00:55:22 Shine On You Crazy Diamond (Parts VI-VIII)
+01:01:41 A Great Day for Freedom
+01:07:37 Hushabye Mountain
+01:10:00 Dominoes
+01:15:00 Breakthrough (with Richard Wright)
+01:22:37 Comfortably Numb (with Bob Geldof)

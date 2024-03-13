@@ -19,7 +19,6 @@ def add_tags(input_dir, album_name, artist_name, recording_date):
         print(f"Error: {e}")
 
 def get_video_length(filename):
-    print('get_video_length')
     # Load the video clip
     clip = VideoFileClip(filename)
     
@@ -50,35 +49,48 @@ def create_chapters_data(text_content, video_length):
     # Process each line
     for line in lines:
         # Split line into start time and title
-        parts = line.split('"')
+        parts = line.split(' ')
         start_time = parts[0].strip()
-        title = parts[1].strip()
+        str1 = " "
+        title = str1.join(parts[2:]).title()
 
-        # Append start time and title to lists
+        if len(start_time) == 5:
+            start_time = f"00:{start_time}"
+        if len(start_time) == 7:
+            start_time = f"0{start_time}"
+
+        # # Append start time and title to lists
         start_times.append(start_time)
         titles.append(title)
         
-    # Initialize the end_times list
-    end_times = []
+        # Initialize the end_times list
+        end_times = []
 
-    # Iterate over the start_times list
-    for i in range(len(start_times)):
-        # If it's not the last element, set the end time to the next value in start_times
-        if i < len(start_times) - 1:
-            end_times.append(start_times[i + 1])
-        else:
-            # For the last element, set the end time to None or any other appropriate value
-            end_times.append(None)
+        # Iterate over the start_times list
+        for i in range(len(start_times)):
+            # If it's not the last element, set the end time to the next value in start_times
+            if i < len(start_times) - 1:
+                if len(start_times[i + 1]) == 5:
+                    start_times[i + 1] = f"00:{start_times[i + 1]}"
+                if len(start_times[i + 1]) == 7:
+                    start_times[i + 1] = f"0{start_times[i + 1]}"
+                end_times.append(start_times[i + 1])
+            else:
+                # For the last element, set the end time to None or any other appropriate value
+                end_times.append(None)
 
-    if end_times:
-        end_times[-1] = video_length
+        if start_times:
+            start_times[0] = "00:00:00"
 
-    # # Create chapters_data
-    chapters_data = {
-        'start': start_times,
-        'end': end_times,
-        'title': titles,
-    }
+        if end_times:
+            end_times[-1] = video_length
+            
+        # # Create chapters_data
+        chapters_data = {
+            'start': start_times,
+            'end': end_times,
+            'title': titles,
+        }
 
     return chapters_data
 

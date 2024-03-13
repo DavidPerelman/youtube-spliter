@@ -4,9 +4,15 @@ from pytube import YouTube
 def get_desc(url):
     youtube = YouTube(url)
     stream = youtube.streams.first()
-    desc = youtube.initial_data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1]['videoSecondaryInfoRenderer']['attributedDescription']['content']
-    return desc
-
+    # desc = youtube.initial_data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1]['videoSecondaryInfoRenderer']['attributedDescription']['content']
+    desc = youtube.initial_data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1]['videoSecondaryInfoRenderer']
+    if len(desc) > 0:
+        if 'attributedDescription' in list(desc):
+            desc = desc['attributedDescription']['content']
+            return desc
+        else:
+            return []
+        
 timestamp_pattern = re.compile(r"\d+:\d+")
 
 def split_line(line):
@@ -44,7 +50,7 @@ def extract_chapters_from_description(description):
             chapters.append(result)
     return chapters
 
-def add_end_timestamp(timestamps, video_length):
+def create_timestamp(timestamps, video_length):
     chapters = []
     # Loop through the list
     for i in range(len(timestamps) - 1):
@@ -80,7 +86,7 @@ def add_end_timestamp(timestamps, video_length):
     for chapter in chapters:
         start_times.append(chapter['timestamp_start'])
         end_times.append(chapter['timestamp_end'])
-        titles.append(chapter['title'])
+        titles.append(chapter['title'].title())
 
     chapters_data = {
         'start': start_times,

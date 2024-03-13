@@ -1,13 +1,13 @@
 import os
 from download_video import startDownload
 from utils import add_tags, create_audio, create_chapters_data, get_video_length, read_text, split_audio_files
-import eyed3
+from pytube import YouTube
 
 software_path = os.getcwd()
 
 # YouTube video URL
 # David Gilmour in Concert Meltdown 2001/2002
-video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
+# video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
 
 # לילה כיום יאיר
 # video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
@@ -15,7 +15,7 @@ video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
 # Twenty One Pilots - Live at Southside Music Festival (Full Set)
 # video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
 
-# video_url = 'https://www.youtube.com/watch?v=lc4BL2adPeo'
+video_url = 'https://www.youtube.com/watch?v=lc4BL2adPeo'
 
 try:
     album_name = input('Enter album name: ')

@@ -13,13 +13,20 @@ software_path = os.getcwd()
 # video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
 
 # Twenty One Pilots - Live at Southside Music Festival (Full Set)
-# video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
+video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
+
+# Arctic Monkeys - Glastonbury 2007 Live - Full Show Remastered HD
+# video_url = 'https://www.youtube.com/watch?v=36GNdaxlA0k'
 
 try:
-    video_url = input('Enter youtube link: ')
-    album_name = input('Enter album name: ').title()
-    artist_name = input('Enter artist: ').title()
-    recording_date = input('Enter recording year: ')
+    video_url = video_url
+    album_name = 'Live at Southside Music Festival'.title()
+    artist_name = 'Twenty One Pilots'.title()
+    recording_date = 2022
+    # video_url = input('Enter youtube link: ')
+    # album_name = input('Enter album name: ').title()
+    # artist_name = input('Enter artist: ').title()
+    # recording_date = input('Enter recording year: ')
 
     print("\nDownloading...")
 
@@ -39,15 +46,19 @@ try:
     description = get_desc(video_url)
     
     if len(description) > 0:
-        print('description')
+        chapters = create_chapters_data(description, video_length, 'description')
         # # # Get video chapters from description
-        chapters = extract_chapters_from_description(description)
-
+        # chapters = extract_chapters_from_description(description)
+        print('description')
+        print(chapters)
         # # # Checking if the video chapters from description is empty or not 
         if len(chapters) > 0:
-                chapters_data = create_timestamp(chapters, video_length)
+                # chapters_data = create_timestamp(chapters, video_length)
 
-                done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
+                print('chapters')
+                print(chapters)
+
+                # done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
         # # # Checking if the text directory is empty or not 
         elif len(text_dir) > 0: 
         # # # Checking if the text chapters belongs to the video 
@@ -58,9 +69,9 @@ try:
                     
                 text_content = r""" {} """.format(text)
 
-                chapters_data = create_chapters_data(text_content, video_length)
+                chapters_data = create_chapters_data(text_content, video_length, 'text_file')
 
-                done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
+                # done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
             else: 
             # # # Create single audio file
                 create_audio(video_path) 
@@ -74,11 +85,9 @@ try:
                         
             text_content = r""" {} """.format(text)
 
-            chapters_data = create_chapters_data(text_content, video_length)
-
+            chapters_data = create_chapters_data(text_content, video_length, 'text_file')
             done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
         else: 
-            print('create_audio')
             # # # Create single audio file
             create_audio(video_path) 
 except OSError:

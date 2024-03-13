@@ -1,6 +1,72 @@
+import re
 import os
 import eyed3
 from moviepy.editor import VideoFileClip
+from extract_chapters_from_description import split_line
+
+def export_data(lines, start_times, titles, end_times, video_length):
+    # Define regex pattern to match time stamps
+        time_pattern_1 = re.compile(r"\d+:\d+")
+        time_pattern_2 = re.compile(r"\d+:\d+:\d+")
+
+        for line in lines:
+        # Search for time stamps in the line
+            matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
+            if matches:
+                data = split_line_to_data(line, video_length)
+                start_times.append(data['start_time'])
+                titles.append(data['title'])
+        
+                # Iterate over the start_times list
+        for i in range(len(start_times)):
+            # If it's not the last element, set the end time to the next value in start_times
+            if i < len(start_times) - 1:
+                if len(start_times[i + 1]) == 5:
+                    start_times[i + 1] = f"00:{start_times[i + 1]}"
+                if len(start_times[i + 1]) == 7:
+                    start_times[i + 1] = f"0{start_times[i + 1]}"
+                end_times.append(start_times[i + 1])
+            else:
+                # For the last element, set the end time to None or any other appropriate value
+                end_times.append(None)
+
+        if start_times:
+            start_times[0] = "00:00:00"
+
+        if end_times:
+            end_times[-1] = video_length
+            
+        # # Create chapters_data
+        chapters_data = {
+            'start': start_times,
+            'end': end_times,
+            'title': titles,
+        }
+
+        return chapters_data
+
+def split_line_to_data(line, video_length):
+    # Initialize lists to store times and titles
+    start_times = []
+    titles = []
+    end_times = []
+
+    # Split line into start time and title
+    parts = line.split(' ')
+    start_time = parts[0].strip()
+    str = " "
+    title = str.join(parts[1:]).title()
+    
+    if len(start_time) == 5:
+        start_time = f"00:{start_time}"
+    if len(start_time) == 7:
+        start_time = f"0{start_time}"
+
+    # # Append start time and title to lists
+    start_times.append(start_time)
+    titles.append(title)
+
+    return {'start_time': start_time, 'title': title}
 
 def add_tags(input_dir, album_name, artist_name, recording_date):
     try:
@@ -38,35 +104,45 @@ def read_text(text_path):
     file.close()
     return content
 
-def create_chapters_data(text_content, video_length):
+def create_chapters_data(text_content, video_length, type):
+    chapters = []
+    # Initialize lists to store times and titles
+    start_times = []
+    titles = []
+    end_times = []
     # Split text into lines
     lines = text_content.strip().split('\n')
 
-    # Initialize lists to store start times and titles
-    start_times = []
-    titles = []
+    if type == 'text_file':
+        # Define regex pattern to match time stamps
+        time_pattern_1 = re.compile(r"\d+:\d+")
+        time_pattern_2 = re.compile(r"\d+:\d+:\d+")
+    
+        for line in lines:
+        # Search for time stamps in the line
+            matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
+            if matches:
+                data = split_line_to_data(line, video_length)
+                start_times.append(data['start_time'])
+                titles.append(data['title'])
 
-    # Process each line
-    for line in lines:
-        # Split line into start time and title
-        parts = line.split(' ')
-        start_time = parts[0].strip()
-        str1 = " "
-        title = str1.join(parts[2:]).title()
+        chapters_data = export_data(lines, start_times, titles, end_times, video_length)
+        return chapters_data
+    
+    if type == 'description':
+        # Define regex pattern to match time stamps
+        time_pattern_1 = re.compile(r"\d+:\d+")
+        time_pattern_2 = re.compile(r"\d+:\d+:\d+")
 
-        if len(start_time) == 5:
-            start_time = f"00:{start_time}"
-        if len(start_time) == 7:
-            start_time = f"0{start_time}"
-
-        # # Append start time and title to lists
-        start_times.append(start_time)
-        titles.append(title)
+        for line in lines:
+        # Search for time stamps in the line
+            matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
+            if matches:
+                data = split_line_to_data(line, video_length)
+                start_times.append(data['start_time'])
+                titles.append(data['title'])
         
-        # Initialize the end_times list
-        end_times = []
-
-        # Iterate over the start_times list
+                # Iterate over the start_times list
         for i in range(len(start_times)):
             # If it's not the last element, set the end time to the next value in start_times
             if i < len(start_times) - 1:
@@ -93,6 +169,51 @@ def create_chapters_data(text_content, video_length):
         }
 
     return chapters_data
+
+    # # Process each line
+    # for line in lines:
+    #     # Split line into start time and title
+    #     parts = line.split(' ')
+    #     start_time = parts[0].strip()
+    #     str1 = " "
+    #     title = str1.join(parts[2:]).title()
+
+    #     if len(start_time) == 5:
+    #         start_time = f"00:{start_time}"
+    #     if len(start_time) == 7:
+    #         start_time = f"0{start_time}"
+
+    #     # # Append start time and title to lists
+    #     start_times.append(start_time)
+    #     titles.append(title)
+        
+    #     # Iterate over the start_times list
+    #     for i in range(len(start_times)):
+    #         # If it's not the last element, set the end time to the next value in start_times
+    #         if i < len(start_times) - 1:
+    #             if len(start_times[i + 1]) == 5:
+    #                 start_times[i + 1] = f"00:{start_times[i + 1]}"
+    #             if len(start_times[i + 1]) == 7:
+    #                 start_times[i + 1] = f"0{start_times[i + 1]}"
+    #             end_times.append(start_times[i + 1])
+    #         else:
+    #             # For the last element, set the end time to None or any other appropriate value
+    #             end_times.append(None)
+
+    #     if start_times:
+    #         start_times[0] = "00:00:00"
+
+    #     if end_times:
+    #         end_times[-1] = video_length
+            
+    #     # # Create chapters_data
+    #     chapters_data = {
+    #         'start': start_times,
+    #         'end': end_times,
+    #         'title': titles,
+    #     }
+
+    # return chapters_data
 
 def split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path):
     try:

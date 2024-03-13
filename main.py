@@ -49,10 +49,9 @@ try:
         chapters = create_chapters_data(description, video_length, 'description')
         # # # Get video chapters from description
         # chapters = extract_chapters_from_description(description)
-        print('description')
-        print(chapters)
+
         # # # Checking if the video chapters from description is empty or not 
-        if len(chapters) > 0:
+        if len(chapters['start'] or chapters['end'] or chapters['title']) > 0:
                 # chapters_data = create_timestamp(chapters, video_length)
 
                 print('chapters')
@@ -63,20 +62,23 @@ try:
         elif len(text_dir) > 0: 
         # # # Checking if the text chapters belongs to the video 
             if f'{video_name}.txt' in text_dir:
-                text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
+                print('video_name')
+                # text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
 
-                text = read_text(text_path)
+                # text = read_text(text_path)
                     
-                text_content = r""" {} """.format(text)
+                # text_content = r""" {} """.format(text)
 
-                chapters_data = create_chapters_data(text_content, video_length, 'text_file')
+                # chapters_data = create_chapters_data(text_content, video_length, 'text_file')
 
                 # done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
             else: 
             # # # Create single audio file
-                create_audio(video_path) 
+                print('video_path')
+                # create_audio(video_path) 
     # # # Checking if the text directory is empty or not 
     elif len(text_dir) > 0: 
+        print('text_dir')
         # # # Checking if the text chapters belongs to the video 
         if f'{video_name}.txt' in text_dir:
             text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
@@ -86,10 +88,11 @@ try:
             text_content = r""" {} """.format(text)
 
             chapters_data = create_chapters_data(text_content, video_length, 'text_file')
-            done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
+            # done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
         else: 
+            print('create_audio')
             # # # Create single audio file
-            create_audio(video_path) 
+            # create_audio(video_path) 
 except OSError:
     # Ignore OSError
     pass

@@ -1,21 +1,21 @@
 import os
 import shutil
+import eyed3
 from moviepy.editor import VideoFileClip
 
-def move_directory(source_dir, destination_dir):
+def add_tags(input_dir, album_name, artist_name, recording_date):
     try:
-        # Create the output folder if it doesn't exist
-        os.makedirs('download', exist_ok=True)
+        for file_name in os.listdir(input_dir):
+            if file_name.endswith(".mp3"):
+                audio_file_path = os.path.join(input_dir, file_name)
+                audio_file = eyed3.load(audio_file_path)
 
-        # fetch all files
-        for file_name in os.listdir(source_dir):
-            # construct full file path
-            source = source_dir + file_name
-            print(source)
-            destination = destination_dir + file_name
-            # move only files
-            if os.path.isfile(source):
-                shutil.move(source, destination)
+                audio_file.tag.artist = artist_name
+                audio_file.tag.title = file_name[3:-4]
+                audio_file.tag.album = album_name
+                audio_file.tag.recording_date = recording_date
+                audio_file.tag.track_num = file_name[:2]
+                audio_file.tag.save()
     except Exception as e:
         print(f"Error: {e}")
 
@@ -82,12 +82,11 @@ def create_chapters_data(text_content, video_length):
 
     return chapters_data
 
-def split_audio_files(video_name, chapters_data, video_path):
+def split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path):
     try:
         # Create the output folder if it doesn't exist
-        os.makedirs(r'download\{}'.format(video_name), exist_ok=True)
-
-        os.makedirs('audio_files', exist_ok=True)
+        folder_name = r'download\{}- {} ({})'.format(artist_name, album_name, recording_date)
+        os.makedirs(folder_name, exist_ok=True)
 
         # Loop through the lists and create subclips
         for idx, (start, end, title) in enumerate(zip(chapters_data['start'], chapters_data['end'], chapters_data['title']), start=1):
@@ -102,7 +101,10 @@ def split_audio_files(video_name, chapters_data, video_path):
             audio_clip = sub_clip.audio
 
             # Write subclip with title as filename
-            audio_clip.write_audiofile(os.path.join(r'download\{}'.format(video_name), f'{idx:02d} {title}.mp3'))
+            audio_clip.write_audiofile(os.path.join(folder_name, f'{idx:02d} {title}.mp3'))
+
+            add_tags(folder_name, album_name, artist_name, recording_date)
+
     except OSError:
         # Ignore OSError
         pass

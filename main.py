@@ -1,12 +1,13 @@
 import os
 from download_video import startDownload
-from utils import create_audio, create_chapters_data, get_video_length, read_text, split_audio_files
+from utils import add_tags, create_audio, create_chapters_data, get_video_length, read_text, split_audio_files
+import eyed3
 
 software_path = os.getcwd()
 
 # YouTube video URL
 # David Gilmour in Concert Meltdown 2001/2002
-# video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
+video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
 
 # לילה כיום יאיר
 # video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
@@ -17,6 +18,10 @@ software_path = os.getcwd()
 # video_url = 'https://www.youtube.com/watch?v=lc4BL2adPeo'
 
 try:
+    album_name = input('Enter album name: ')
+    artist_name = input('Enter artist: ')
+    recording_date = input('Enter recording year: ')
+
     print("\nDownloading...")
 
     # Download video
@@ -24,7 +29,6 @@ try:
 
     video_name = os.path.basename(video_path[:-4])
 
-    print(video_name)
     text_dir = os.listdir('./chapters_files') 
 
     # # Checking if the text directory is empty or not 
@@ -41,7 +45,7 @@ try:
 
         chapters_data = create_chapters_data(text_content, video_length)
 
-        done = split_audio_files(video_name, chapters_data, video_path)
+        done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
 except OSError:
     # Ignore OSError
     pass

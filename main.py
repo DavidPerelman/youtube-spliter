@@ -11,7 +11,7 @@ software_path = os.getcwd()
 # video_url = 'https://www.youtube.com/watch?v=5hrd5Ek54VA'
 
 # לילה כיום יאיר
-video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
+# video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
 
 # Twenty One Pilots - Live at Southside Music Festival (Full Set)
 # video_url = 'https://www.youtube.com/watch?v=1AyWoI2e7FM'
@@ -20,15 +20,10 @@ video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
 # video_url = 'https://www.youtube.com/watch?v=36GNdaxlA0k'
 
 try:
-    # video_url = input('Enter youtube link: ')
-    # album_name = input('Enter album name: ').title()
-    # artist_name = input('Enter artist: ').title()
-    # recording_date = input('Enter recording year: ')
-    
-    video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
-    album_name = 'fdfdf'.title()
-    artist_name = 'fdfd'.title()
-    recording_date = 2002
+    video_url = input('Enter youtube link: ')
+    album_name = input('Enter album name: ').title()
+    artist_name = input('Enter artist: ').title()
+    recording_date = input('Enter recording year: ')
 
     # album_name_lang_check = detect(album_name)
     # artist_name_lang_check = detect(artist_name)

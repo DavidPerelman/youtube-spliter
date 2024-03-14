@@ -14,5 +14,10 @@ app.title('YouTube Splitter')
 title = customtkinter.CTkLabel(app, text='Insert a youtube link')
 title.pack(padx=10, pady=10)
 
+# Link input 
+url_var = tkinter.StringVar()
+link = customtkinter.CTkEntry(app, width=350, height=40, textvariable=url_var)
+link.pack()
+
 # Run app
 app.mainloop()

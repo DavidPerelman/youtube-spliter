@@ -96,9 +96,9 @@ software_path = os.getcwd()
 #     # Ignore OSError
 #     pass
 
-def start_run(video_url, album_name, artist_name, recording_date):
-    print('Hello from main')
-    print(video_url)
+def start_run(video_id, video_timestamps, album_name, artist_name, recording_date):
+    print(video_timestamps)
+    print(video_id)
     print(album_name)
     print(artist_name)
     print(recording_date)

@@ -72,12 +72,12 @@ def get_fake_video_comments():
 
 #     return comments
 
-# # Extract duration from response:
-video_response = get_fake_video_length()
-video_length = extract_video_duration(video_response)
+# # # Extract duration from response:
+# video_response = get_fake_video_length()
+# video_length = extract_video_duration(video_response)
 
-# Extract timestamps from response:
-comments_response = get_fake_video_comments()
-video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
+# # Extract timestamps from response:
+# comments_response = get_fake_video_comments()
+# video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
 
-print(video_timestamps)
+# print(video_timestamps)

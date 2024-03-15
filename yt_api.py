@@ -1,9 +1,12 @@
+import os
 import json
+from dotenv import load_dotenv
 import googleapiclient.discovery
+from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments
 
-from yt_api_utils import extract_video_duration, extract_video_timestamp_comments
+load_dotenv()
 
-api_key = 'AIzaSyA3BF_ZeABmwhs3APurFXccAoeZncKu0SI'
+api_key = os.getenv('API_KEY')
 
 # Create a YouTube Data API client
 youtube = googleapiclient.discovery.build('youtube', 'v3', developerKey=api_key)
@@ -75,6 +78,6 @@ video_length = extract_video_duration(video_response)
 
 # Extract timestamps from response:
 comments_response = get_fake_video_comments()
-video_timestamps = extract_video_timestamp_comments(comments_response, video_length)
+video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
 
 print(video_timestamps)

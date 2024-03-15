@@ -15,7 +15,7 @@ def extract_video_duration(video_response):
 
     return video_length
 
-def extract_video_timestamp_comments(comments, video_length):
+def extract_video_timestamps_from_comments(comments, video_length):
     html_text = ''
     # Regular expression pattern to match chapter timestamps
     pattern = r'(?<!href=\")(?:\d+:)?\d+:\d+'  # Matches patterns like '0:00', '03:28', etc.

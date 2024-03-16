@@ -2,7 +2,7 @@ import os
 import json
 from dotenv import load_dotenv
 import googleapiclient.discovery
-from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments
+from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments, extract_video_timestamps_from_description
 
 load_dotenv()
 
@@ -10,7 +10,7 @@ api_key = os.getenv('API_KEY')
 
 # Create a YouTube Data API client
 youtube = googleapiclient.discovery.build('youtube', 'v3', developerKey=api_key)
-video_id='36GNdaxlA0k'
+video_id='UMruSyngNaY'
 
 def get_fake_video_length():
     # Opening JSON file
@@ -38,14 +38,14 @@ def get_fake_video_comments():
 
     return comments_response
 
-# def get_video_length():
-#     # # Define parameters for the API request
-#     video_response = youtube.videos().list(
-#         part='snippet,contentDetails',
-#         id=video_id
-#     ).execute()
+def get_video_length(video_id):
+    # # Define parameters for the API request
+    video_response = youtube.videos().list(
+        part='snippet,contentDetails',
+        id=video_id
+    ).execute()
 
-#     return video_response
+    return video_response
     
 # def get_video_comments():
 #     # Call the API to retrieve comments for the specified video
@@ -72,12 +72,15 @@ def get_fake_video_comments():
 
 #     return comments
 
-# # # Extract duration from response:
+# Extract duration from response:
 # video_response = get_fake_video_length()
 # video_length = extract_video_duration(video_response)
 
-# # Extract timestamps from response:
+# # Extract timestamps from comments response:
 # comments_response = get_fake_video_comments()
 # video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
 
-# print(video_timestamps)
+# Extract timestamps from description response:
+# description_response = get_video_length()
+# description = description_response['items'][0]['snippet']['description']
+# video_timestamps = extract_video_timestamps_from_description(description, video_length)

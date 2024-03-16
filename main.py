@@ -97,11 +97,12 @@ software_path = os.getcwd()
 #     pass
 
 def start_run(video_id, video_timestamps, album_name, artist_name, recording_date):
-    print(video_timestamps)
-    print(video_id)
-    print(album_name)
-    print(artist_name)
-    print(recording_date)
+    print('Hello from main')
+    # print(video_timestamps)
+    # print(video_id)
+    # print(album_name)
+    # print(artist_name)
+    # print(recording_date)
     return
     try:
         video_url = input('Enter youtube link: ')

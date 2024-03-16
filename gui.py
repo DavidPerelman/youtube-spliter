@@ -3,13 +3,38 @@ import tkinter
 import customtkinter
 
 from main import start_run
-from yt_api import get_fake_video_comments, get_fake_video_length
-from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments
+from yt_api import get_fake_video_comments, get_fake_video_length, get_video_length
+from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments, extract_video_timestamps_from_description
 
+def checkbox_event():
+    if check_timestamps_in_desc_var.get():
+        timestamps_in_comments.configure(state=tkinter.DISABLED)
+        timestamps_in_file.configure(state=tkinter.DISABLED)
+    else:
+        timestamps_in_comments.configure(state=tkinter.NORMAL)
+        timestamps_in_file.configure(state=tkinter.NORMAL)
+
+        if check_timestamps_in_comments_var.get():
+            timestamps_in_desc.configure(state=tkinter.DISABLED)
+            timestamps_in_file.configure(state=tkinter.DISABLED)
+        else:
+            timestamps_in_desc.configure(state=tkinter.NORMAL)
+            timestamps_in_file.configure(state=tkinter.NORMAL)
+
+            if check_timestamps_in_file_var.get():
+                timestamps_in_desc.configure(state=tkinter.DISABLED)
+                timestamps_in_comments.configure(state=tkinter.DISABLED)
+            else:
+                timestamps_in_desc.configure(state=tkinter.NORMAL)
+                timestamps_in_comments.configure(state=tkinter.NORMAL)
+
+        
 def submit():
+    print(check_timestamps_in_desc_var.get())
+    print(check_timestamps_in_comments_var.get())
     # print(video_url.get())
     video_id = ''
-    video_url = 'https://www.youtube.com/watch?v=GtPUOFra8nE'
+    video_url = 'https://www.youtube.com/watch?v=UMruSyngNaY'
     
     # Regular expression pattern to match YouTube video IDs
     pattern = r"(?<=v=)[a-zA-Z0-9_-]+(?=&|$)"
@@ -22,23 +47,30 @@ def submit():
         video_id = match.group(0)
     
     if check_timestamps_in_desc_var.get() == True:
-        true_label.configure(text='True')
-    else:
-        true_label.configure(text='False')
+        print('check_timestamps_in_desc_var')
+        # Extract duration from response:
+        video_response = get_fake_video_length()
+        video_length = extract_video_duration(video_response)
 
-    if check_timestamps_in_comments_var.get() == True:
-        true_label.configure(text='True')
+        # Extract timestamps from description response:
+        description_response = get_video_length(video_id)
+        description = description_response['items'][0]['snippet']['description']
+        description_video_timestamps = extract_video_timestamps_from_description(description, video_length)
+
+        start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+    elif check_timestamps_in_comments_var.get() == True:
+        print('check_timestamps_in_comments_var')
         # # Extract duration from response:
         video_response = get_fake_video_length()
         video_length = extract_video_duration(video_response)
 
         # Extract timestamps from response:
         comments_response = get_fake_video_comments()
-        video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
+        comments_video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
 
-        start_run(video_id, video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
-    else:
-        start_run(video_id, None, album_name.get(), artist_name.get(), recording_date.get())
+        start_run(video_id, comments_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+    # else:
+    #     return
 
 # System Setting
 customtkinter.set_appearance_mode('System')
@@ -83,23 +115,25 @@ recording_date.pack(padx=10)
 
 # Timestamps in description check box
 check_timestamps_in_desc_var = customtkinter.BooleanVar(value=False)
-timestamps_in_desc = customtkinter.CTkCheckBox(app, text='There is timestamps in video description?', 
-                                              variable=check_timestamps_in_desc_var, onvalue=True, offvalue=False)
+timestamps_in_desc = customtkinter.CTkCheckBox(app, text='There is timestamps in video description?', command=checkbox_event,
+                                              variable=check_timestamps_in_desc_var, onvalue="on", offvalue="off")
 timestamps_in_desc.pack(padx=1, pady=20)
 
 # Timestamps in comments check box
 check_timestamps_in_comments_var = customtkinter.BooleanVar(value=False)
-timestamps_in_comments = customtkinter.CTkCheckBox(app, text='There is timestamps in video comments?', 
-                                              variable=check_timestamps_in_comments_var, onvalue=True, offvalue=False)
+timestamps_in_comments = customtkinter.CTkCheckBox(app, text='There is timestamps in video comments?', command=checkbox_event, 
+                                              variable=check_timestamps_in_comments_var, onvalue="on", offvalue="off")
 timestamps_in_comments.pack(padx=1, pady=1)
+
+# Timestamps in file check box
+check_timestamps_in_file_var = customtkinter.BooleanVar(value=False)
+timestamps_in_file = customtkinter.CTkCheckBox(app, text='There is timestamps in file?', command=checkbox_event, 
+                                              variable=check_timestamps_in_file_var, onvalue="on", offvalue="off")
+timestamps_in_file.pack(padx=1, pady=1)
 
 # Download button
 button = customtkinter.CTkButton(app, text='Download', command=submit, width=350, height=40)
 button.pack(padx=20, pady=20)
-
-# Adding UI Elements
-true_label = customtkinter.CTkLabel(app, text='')
-true_label.pack(padx=10, pady=10)
 
 # Run app
 app.mainloop()

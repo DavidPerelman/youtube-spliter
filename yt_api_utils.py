@@ -65,3 +65,40 @@ def extract_video_timestamps_from_comments(comments, video_length):
     data[0]['timestamps_end'][-1] = video_length
 
     return data
+
+def extract_video_timestamps_from_description(description, video_length):
+    pattern = r'(?P<title>.*?):\s*(?P<timestamp>\d+:\d+(:\d+)?)'
+
+    # Find all matches in the text
+    matches = re.findall(pattern, description)
+
+    # Extract timestamps and titles from the matches
+    timestamps = [match[1] for match in matches]
+    titles = [match[0] for match in matches]
+
+    data = [{
+        "titles": titles,
+        "timestamps_start": [],
+        "timestamps_end": [],
+    }]
+
+    # Print the extracted titles
+    for time in timestamps:
+        if len(time) == 4:
+                time = f"00:0{time.strip()}"
+                data[0]['timestamps_start'].append(time)
+        if len(time) == 5:
+                time = f"00:{time.strip()}"
+                data[0]['timestamps_start'].append(time)
+        if len(time) == 7:
+                time = f"0{time.strip()}"
+                data[0]['timestamps_start'].append(time)
+    
+    for i in range(len(data[0]['timestamps_start'])):
+        if i < len(data[0]['timestamps_start']) - 1:
+            data[0]['timestamps_end'].append(data[0]['timestamps_start'][i + 1])
+
+    data[0]['timestamps_start'][0] = "00:00:00"
+    data[0]['timestamps_end'][-1] = video_length
+
+    return data

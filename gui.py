@@ -6,8 +6,8 @@ import customtkinter
 
 from main import start_run
 from utils import create_chapters_data
-from yt_api import get_fake_video_comments, get_fake_video_length, get_video_data
-from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments, extract_video_timestamps_from_description
+from yt_api import get_video_data
+from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments
 
 def disable_upload_file():
     upload_file_button.configure(state=tkinter.DISABLED)
@@ -30,38 +30,28 @@ def checkbox_event():
     if check_timestamps_in_desc_var.get():
         timestamps_in_comments.configure(state=tkinter.DISABLED)
         timestamps_in_file.configure(state=tkinter.DISABLED)
-        # upload_file_button.configure(state=tkinter.DISABLED)
     else:
         timestamps_in_comments.configure(state=tkinter.NORMAL)
         timestamps_in_file.configure(state=tkinter.NORMAL)
-        # upload_file_button.configure(state=tkinter.DISABLED)
 
         if check_timestamps_in_comments_var.get():
             timestamps_in_desc.configure(state=tkinter.DISABLED)
             timestamps_in_file.configure(state=tkinter.DISABLED)
-            # upload_file_button.configure(state=tkinter.DISABLED)
         else:
             timestamps_in_desc.configure(state=tkinter.NORMAL)
             timestamps_in_file.configure(state=tkinter.NORMAL)
-            # upload_file_button.configure(state=tkinter.DISABLED)
 
             if check_timestamps_in_file_var.get():
                 timestamps_in_desc.configure(state=tkinter.DISABLED)
                 timestamps_in_comments.configure(state=tkinter.DISABLED)
-                # upload_file_button.configure(state=tkinter.NORMAL)
             else:
                 timestamps_in_desc.configure(state=tkinter.NORMAL)
                 timestamps_in_comments.configure(state=tkinter.NORMAL)
-                # upload_file_button.configure(state=tkinter.NORMAL)
-
         
 def submit():
-    # print(filename)
-    # print(video_url.get())
     video_id = ''
-    video_url = 'https://www.youtube.com/watch?v=36GNdaxlA0k'
-
-    print(video_url)
+    video_url = video_url_link.get()
+    # video_url = 'https://www.youtube.com/watch?v=cXIbcvaWIKg'
     
     # Regular expression pattern to match YouTube video IDs
     pattern = r"(?<=v=)[a-zA-Z0-9_-]+(?=&|$)"
@@ -75,7 +65,6 @@ def submit():
     
     if check_timestamps_in_desc_var.get() == True:
         # Extract data from response:
-        # video_response = get_fake_video_length()
         video_response = get_video_data(video_id, 'description')
 
         # Extract duration from video data:
@@ -83,13 +72,11 @@ def submit():
 
         # Extract timestamps from video response:
         description = video_response['items'][0]['snippet']['description']
-        # description = description_response['items'][0]['snippet']['description']
         description_video_timestamps = create_chapters_data(description, video_length, 'text_file')
-        start_run(video_url, description_video_timestamps, 'Live At Southside Music Festival', 'Twenty One Pilots', 2022)
-        # start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+        # start_run(video_url, description_video_timestamps, 'Live At Southside Music Festival', 'Twenty One Pilots', 2022)
+        start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
     elif check_timestamps_in_comments_var.get() == True:
         # Extract data from response:
-        # comments_response = get_fake_video_comments()
         comments_response = get_video_data(video_id, 'comments')
         duration_response = get_video_data(video_id, 'description')
 
@@ -99,19 +86,20 @@ def submit():
         # Extract timestamps from response:
         comments_video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
         
-        # start_run(video_id, comments_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
-        start_run(video_url, comments_video_timestamps[0], 'Live At Glastonbury', 'Arctic Monkeys', 2007)
+        start_run(video_id, comments_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+        # start_run(video_url, comments_video_timestamps[0], 'Live At Glastonbury', 'Arctic Monkeys', 2007)
     elif check_timestamps_in_file_var.get() == True:
         # # Extract duration from text file:
-        video_response = get_fake_video_length()
+        video_response = get_video_data(video_id, 'description')
         video_length = extract_video_duration(video_response)
 
         # Extract timestamps from text file:
         file_content = open(f"{filename}", "r").read()
-        description_video_timestamps = create_chapters_data(file_content, video_length, 'text_file')
-        start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
-    # else:
-    #     return
+        text_file_video_timestamps = create_chapters_data(file_content, video_length, 'text_file')
+        start_run(video_id, text_file_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+        # start_run(video_url, text_file_video_timestamps, 'David Gilmour In Concert', 'David Gilmour', 2002)
+    else:
+        start_run(video_url, [], 'aaa', 'aaa', 1975)
 
 # System Setting
 customtkinter.set_appearance_mode('System')
@@ -127,8 +115,8 @@ label = customtkinter.CTkLabel(app, text='Enter youtube link')
 label.pack(padx=10, pady=10)
 
 # Link input 
-video_url = customtkinter.CTkEntry(app, width=350, height=40)
-video_url.pack(padx=10)
+video_url_link = customtkinter.CTkEntry(app, width=350, height=40)
+video_url_link.pack(padx=10)
 
 # Adding UI Elements
 label = customtkinter.CTkLabel(app, text='Enter album name')

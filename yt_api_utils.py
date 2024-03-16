@@ -1,7 +1,5 @@
 import re
 
-from utils import export_data, split_line_to_data
-
 def extract_video_duration(video_response):
     # Extract duration from response
     duration = video_response['items'][0]['contentDetails']['duration']
@@ -66,32 +64,4 @@ def extract_video_timestamps_from_comments(comments, video_length):
     data[0]['start'][0] = "00:00:00"
     data[0]['end'].append(video_length)
 
-    print(len(data[0]['title']))
-    print(len(data[0]['start']))
-    print(len(data[0]['end']))
-
     return data
-
-def extract_video_timestamps_from_description(description, video_length):
-    # Initialize lists to store times and titles
-    start_times = []
-    titles = []
-    end_times = []
-    # Split text into lines
-    lines = description.strip().split('\n')
-
-    if type == 'text_file':
-        # Define regex pattern to match time stamps
-        time_pattern_1 = re.compile(r"\d+:\d+")
-        time_pattern_2 = re.compile(r"\d+:\d+:\d+")
-    
-        for line in lines:
-        # Search for time stamps in the line
-            matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
-            if matches:
-                data = split_line_to_data(line, video_length)
-                start_times.append(data['start_time'])
-                titles.append(data['title'])
-
-    chapters_data = export_data(start_times, titles, end_times, video_length)
-    return chapters_data

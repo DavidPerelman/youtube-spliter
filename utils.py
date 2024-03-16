@@ -3,35 +3,9 @@ import os
 import eyed3
 from moviepy.editor import VideoFileClip
 from pytube import YouTube
-
-def get_desc(url):
-    youtube = YouTube(url)
-    stream = youtube.streams.first()
-    desc = youtube.initial_data['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1]['videoSecondaryInfoRenderer']
-    if len(desc) > 0:
-        if 'attributedDescription' in list(desc):
-            desc = desc['attributedDescription']['content']
-            return desc
-        else:
-            return []
         
-timestamp_pattern = re.compile(r"\d+:\d+")
-
-def export_data(start_times, titles, end_times, video_length):
-
-    # # Define regex pattern to match time stamps
-    #     time_pattern_1 = re.compile(r"\d+:\d+")
-    #     time_pattern_2 = re.compile(r"\d+:\d+:\d+")
-
-        # for line in lines:
-        # # Search for time stamps in the line
-        #     matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
-        #     if matches:
-        #         data = split_line_to_data(line, video_length)
-        #         start_times.append(data['start_time'])
-        #         titles.append(data['title'])
-        
-                # Iterate over the start_times list
+def export_data(start_times, titles, end_times, video_length):        
+        # Iterate over the start_times list
         for i in range(len(start_times)):
             # If it's not the last element, set the end time to the next value in start_times
             if i < len(start_times) - 1:
@@ -99,26 +73,6 @@ def add_tags(input_dir, album_name, artist_name, recording_date):
                 audio_file.tag.save()
     except Exception as e:
         print(f"Error: {e}")
-
-def get_video_length(filename):
-    # Load the video clip
-    clip = VideoFileClip(filename)
-    
-    # Get the duration of the video in seconds
-    duration_seconds = clip.duration
-    
-    # Convert duration to hh:mm:ss format
-    hours = int(duration_seconds // 3600)
-    minutes = int((duration_seconds % 3600) // 60)
-    seconds = int(duration_seconds % 60)
-    
-    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-
-def read_text(text_path):
-    file = open(text_path, "r")
-    content = file.read()
-    file.close()
-    return content
 
 def create_chapters_data(text_content, video_length, type):
     # Initialize lists to store times and titles

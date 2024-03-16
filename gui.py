@@ -75,8 +75,8 @@ def submit():
     
     if check_timestamps_in_desc_var.get() == True:
         # Extract data from response:
-        video_response = get_fake_video_length()
-        # video_response = get_video_data(video_id, 'description')
+        # video_response = get_fake_video_length()
+        video_response = get_video_data(video_id, 'description')
 
         # Extract duration from video data:
         video_length = extract_video_duration(video_response)
@@ -85,20 +85,22 @@ def submit():
         description = video_response['items'][0]['snippet']['description']
         # description = description_response['items'][0]['snippet']['description']
         description_video_timestamps = create_chapters_data(description, video_length, 'text_file')
-        print(description_video_timestamps)
         start_run(video_url, description_video_timestamps, 'Live At Southside Music Festival', 'Twenty One Pilots', 2022)
         # start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
     elif check_timestamps_in_comments_var.get() == True:
-        print('check_timestamps_in_comments_var')
         # Extract data from response:
-        # video_response = get_fake_video_length()
-        video_response = get_video_data(video_id, 'comments')
+        # comments_response = get_fake_video_comments()
+        comments_response = get_video_data(video_id, 'comments')
+        duration_response = get_video_data(video_id, 'description')
+
+        # Extract duration from video data:
+        video_length = extract_video_duration(duration_response)
 
         # Extract timestamps from response:
-        comments_response = get_fake_video_comments()
         comments_video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
-
-        start_run(video_id, comments_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+        
+        # start_run(video_id, comments_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+        start_run(video_url, comments_video_timestamps[0], 'Live At Glastonbury', 'Arctic Monkeys', 2007)
     elif check_timestamps_in_file_var.get() == True:
         # # Extract duration from text file:
         video_response = get_fake_video_length()

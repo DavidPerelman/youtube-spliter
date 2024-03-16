@@ -118,8 +118,6 @@ def start_run(video_url, video_timestamps, album_name, artist_name, recording_da
         # # # Download video
         video_path = startDownload(video_url)
 
-        print(len(video_timestamps))
-
         if len(video_timestamps) > 0:
             split_audio_files(artist_name, album_name, recording_date, video_timestamps, video_path)
             

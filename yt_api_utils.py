@@ -57,14 +57,18 @@ def extract_video_timestamps_from_comments(comments, video_length):
         if len(time) == 7:
                 time = f"0{time.strip()}"
                 data[0]['start'].append(time)
-        data[0]['titles'].append(title.strip())
+        data[0]['title'].append(title.strip().title())
     
     for i in range(len(data[0]['start'])):
         if i < len(data[0]['start']) - 1:
             data[0]['end'].append(data[0]['start'][i + 1])
 
     data[0]['start'][0] = "00:00:00"
-    data[0]['end'][-1] = video_length
+    data[0]['end'].append(video_length)
+
+    print(len(data[0]['title']))
+    print(len(data[0]['start']))
+    print(len(data[0]['end']))
 
     return data
 

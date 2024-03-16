@@ -1,9 +1,11 @@
+import os
 import re
 import tkinter
 from tkinter import filedialog
 import customtkinter
 
 from main import start_run
+from utils import create_chapters_data
 from yt_api import get_fake_video_comments, get_fake_video_length, get_video_length
 from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments, extract_video_timestamps_from_description
 
@@ -11,9 +13,12 @@ def disable_upload_file():
     upload_file_button.configure(state=tkinter.DISABLED)
 
 def upload_file():
-    print('upload_file')
+    global filename
+    f_types = [('Text Files', '*.txt')]
     filename = filedialog.askopenfilename(
-        filetypes=("txt files", "*.txt")
+        initialdir=f'{os.getcwd()}\chapters_files',
+        title="Select Text File",
+        filetypes=f_types
     )
 
 def checkbox_event():
@@ -51,8 +56,7 @@ def checkbox_event():
 
         
 def submit():
-    print(check_timestamps_in_desc_var.get())
-    print(check_timestamps_in_comments_var.get())
+    # print(filename)
     # print(video_url.get())
     video_id = ''
     video_url = 'https://www.youtube.com/watch?v=UMruSyngNaY'
@@ -90,6 +94,15 @@ def submit():
         comments_video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
 
         start_run(video_id, comments_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+    elif check_timestamps_in_file_var.get() == True:
+        # # Extract duration from text file:
+        video_response = get_fake_video_length()
+        video_length = extract_video_duration(video_response)
+
+        # Extract timestamps from text file:
+        file_content = open(f"{filename}", "r").read()
+        description_video_timestamps = create_chapters_data(file_content, video_length, 'text_file')
+        start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
     # else:
     #     return
 

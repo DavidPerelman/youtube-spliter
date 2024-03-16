@@ -71,6 +71,8 @@ def split_line_to_data(line, video_length):
     str = " "
     title = str.join(parts[1:]).title()
     
+    if len(start_time) == 4:
+        start_time = f"00:0{start_time}"
     if len(start_time) == 5:
         start_time = f"00:{start_time}"
     if len(start_time) == 7:
@@ -178,9 +180,6 @@ def split_audio_files(artist_name, album_name, recording_date, chapters_data, vi
 
             # Write subclip with title as filename
             audio_clip.write_audiofile(os.path.join(folder_name, f'{idx:02d} {title}.mp3'))
-
-            add_tags(folder_name, album_name, artist_name, recording_date)
-
     except OSError:
         # Ignore OSError
         pass

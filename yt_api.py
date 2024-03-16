@@ -38,14 +38,53 @@ def get_fake_video_comments():
 
     return comments_response
 
-def get_video_length(video_id):
-    # # Define parameters for the API request
-    video_response = youtube.videos().list(
-        part='snippet,contentDetails',
-        id=video_id
-    ).execute()
+# def get_video_length(video_id):
+#     # # Define parameters for the API request
+#     video_response = youtube.videos().list(
+#         part='snippet,contentDetails',
+#         id=video_id
+#     ).execute()
 
-    return video_response
+#     return video_response
+    
+
+def get_video_data(video_id, type):
+    video_response = ''
+
+    if type == 'description':
+        # # Define parameters for the API request
+        video_response = youtube.videos().list(
+            part='snippet,contentDetails',
+            id=video_id
+        ).execute()
+
+        return video_response
+    
+    if type == 'comments':
+        # Call the API to retrieve comments for the specified video
+        comments = []
+        next_page_token = None
+
+        while True:
+            response = youtube.commentThreads().list(
+                part="snippet",
+                videoId=video_id,
+                maxResults=100,
+                pageToken=next_page_token
+            ).execute()
+
+            # Process each comment in the response
+            for item in response['items']:
+                comment = item['snippet']['topLevelComment']['snippet']
+                comments.append(comment)
+
+            # Check if there are more pages of comments
+            next_page_token = response.get('nextPageToken')
+            if not next_page_token:
+                break
+
+        return comments
+
     
 # def get_video_comments():
 #     # Call the API to retrieve comments for the specified video

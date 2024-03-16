@@ -2,8 +2,8 @@ import os
 import pathlib
 from tkinter import Entry
 from download_video import startDownload
-from utils import create_audio, create_chapters_data, get_video_length, read_text, split_audio_files, get_desc
-# from langdetect import detect
+from utils import add_tags, create_audio, create_chapters_data, get_video_length, read_text, split_audio_files, get_desc
+from langdetect import detect
 
 software_path = os.getcwd()
 
@@ -96,85 +96,41 @@ software_path = os.getcwd()
 #     # Ignore OSError
 #     pass
 
-def start_run(video_id, video_timestamps, album_name, artist_name, recording_date):
+def start_run(video_url, video_timestamps, album_name, artist_name, recording_date):
     print('Hello from main')
-    # print(video_timestamps)
-    # print(video_id)
-    # print(album_name)
-    # print(artist_name)
-    # print(recording_date)
-    return
+    print(video_timestamps)
+    print(album_name)
+    print(artist_name)
+    print(recording_date)
+
     try:
-        video_url = input('Enter youtube link: ')
-        album_name = input('Enter album name: ').title()
-        artist_name = input('Enter artist: ').title()
-        recording_date = input('Enter recording year: ')
+        album_name_lang_check = detect(album_name)
+        artist_name_lang_check = detect(artist_name)
 
-        # album_name_lang_check = detect(album_name)
-        # artist_name_lang_check = detect(artist_name)
+        if album_name_lang_check != 'he':
+            album_name.title()
 
-        # if album_name_lang_check != 'he':
-        #     album_name.title()
-
-        # if artist_name_lang_check != 'he':
-        #     artist_name.title()
+        if artist_name_lang_check != 'he':
+            artist_name.title()
 
         print("\nDownloading...")
 
         # # # Download video
         video_path = startDownload(video_url)
 
-        # # # Get video length
-        video_length = get_video_length(video_path)
+        print(len(video_timestamps))
 
-        # # # Get video name
-        video_name = os.path.basename(video_path[:-4])
+        if len(video_timestamps) > 0:
+            split_audio_files(artist_name, album_name, recording_date, video_timestamps, video_path)
+            
+            # Create the output folder if it doesn't exist
+            folder_name = r'download\{}- {} ({})'.format(artist_name, album_name, recording_date)
+            os.makedirs(folder_name, exist_ok=True)
 
-        # # # Get text folder
-        text_dir = os.listdir('./chapters_files') 
-
-        # # # Get video description
-        description = get_desc(video_url)
-        
-        if len(description) > 0:
-            # # # Get video chapters from description
-            chapters = create_chapters_data(description, video_length, 'description')
-            # # # Checking if the video chapters from description is empty or not 
-            if len(chapters['start'] or chapters['end'] or chapters['title']) > 0:
-                done = split_audio_files(artist_name, album_name, recording_date, chapters, video_path)
-            # # # Checking if the text directory is empty or not 
-            elif len(text_dir) > 0: 
-            # # # Checking if the text chapters belongs to the video 
-                if f'{video_name}.txt' in text_dir:
-                    text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
-
-                    text = read_text(text_path)
-                        
-                    text_content = r""" {} """.format(text)
-
-                    chapters_data = create_chapters_data(text_content, video_length, 'text_file')
-
-                    done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
-                else: 
-                # # # Create single audio file
-                    create_audio(artist_name, album_name, recording_date, video_path) 
-        # # # Checking if the text directory is empty or not 
-        elif len(text_dir) > 0: 
-            # # # Checking if the text chapters belongs to the video 
-            if f'{video_name}.txt' in text_dir:
-                text_path = r'{}\chapters_files\{}.txt'.format(software_path, video_name)
-
-                text = read_text(text_path)
-                            
-                text_content = r""" {} """.format(text)
-
-                chapters_data = create_chapters_data(text_content, video_length, 'text_file')
-                
-                done = split_audio_files(artist_name, album_name, recording_date, chapters_data, video_path)
-            else: 
-                # # # Create single audio file
-                create_audio(artist_name, album_name, recording_date, video_path) 
-
+            add_tags(folder_name, album_name, artist_name, recording_date)
+        else:
+            # # # Create single audio file
+            create_audio(artist_name, album_name, recording_date, video_path) 
         print('Done!')
     except OSError:
         # Ignore OSError

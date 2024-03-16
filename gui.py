@@ -6,7 +6,7 @@ import customtkinter
 
 from main import start_run
 from utils import create_chapters_data
-from yt_api import get_fake_video_comments, get_fake_video_length, get_video_length
+from yt_api import get_fake_video_comments, get_fake_video_length, get_video_data
 from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments, extract_video_timestamps_from_description
 
 def disable_upload_file():
@@ -59,7 +59,9 @@ def submit():
     # print(filename)
     # print(video_url.get())
     video_id = ''
-    video_url = 'https://www.youtube.com/watch?v=UMruSyngNaY'
+    video_url = 'https://www.youtube.com/watch?v=36GNdaxlA0k'
+
+    print(video_url)
     
     # Regular expression pattern to match YouTube video IDs
     pattern = r"(?<=v=)[a-zA-Z0-9_-]+(?=&|$)"
@@ -72,22 +74,25 @@ def submit():
         video_id = match.group(0)
     
     if check_timestamps_in_desc_var.get() == True:
-        print('check_timestamps_in_desc_var')
-        # Extract duration from response:
+        # Extract data from response:
         video_response = get_fake_video_length()
+        # video_response = get_video_data(video_id, 'description')
+
+        # Extract duration from video data:
         video_length = extract_video_duration(video_response)
 
-        # Extract timestamps from description response:
-        description_response = get_video_length(video_id)
-        description = description_response['items'][0]['snippet']['description']
-        description_video_timestamps = extract_video_timestamps_from_description(description, video_length)
-
-        start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
+        # Extract timestamps from video response:
+        description = video_response['items'][0]['snippet']['description']
+        # description = description_response['items'][0]['snippet']['description']
+        description_video_timestamps = create_chapters_data(description, video_length, 'text_file')
+        print(description_video_timestamps)
+        start_run(video_url, description_video_timestamps, 'Live At Southside Music Festival', 'Twenty One Pilots', 2022)
+        # start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
     elif check_timestamps_in_comments_var.get() == True:
         print('check_timestamps_in_comments_var')
-        # # Extract duration from response:
-        video_response = get_fake_video_length()
-        video_length = extract_video_duration(video_response)
+        # Extract data from response:
+        # video_response = get_fake_video_length()
+        video_response = get_video_data(video_id, 'comments')
 
         # Extract timestamps from response:
         comments_response = get_fake_video_comments()

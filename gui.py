@@ -1,32 +1,53 @@
 import re
 import tkinter
+from tkinter import filedialog
 import customtkinter
 
 from main import start_run
 from yt_api import get_fake_video_comments, get_fake_video_length, get_video_length
 from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments, extract_video_timestamps_from_description
 
+def disable_upload_file():
+    upload_file_button.configure(state=tkinter.DISABLED)
+
+def upload_file():
+    print('upload_file')
+    filename = filedialog.askopenfilename(
+        filetypes=("txt files", "*.txt")
+    )
+
 def checkbox_event():
+    if check_timestamps_in_file_var.get() == False:
+        upload_file_button.configure(state=tkinter.DISABLED)
+    else:
+        upload_file_button.configure(state=tkinter.NORMAL)
+        
     if check_timestamps_in_desc_var.get():
         timestamps_in_comments.configure(state=tkinter.DISABLED)
         timestamps_in_file.configure(state=tkinter.DISABLED)
+        # upload_file_button.configure(state=tkinter.DISABLED)
     else:
         timestamps_in_comments.configure(state=tkinter.NORMAL)
         timestamps_in_file.configure(state=tkinter.NORMAL)
+        # upload_file_button.configure(state=tkinter.DISABLED)
 
         if check_timestamps_in_comments_var.get():
             timestamps_in_desc.configure(state=tkinter.DISABLED)
             timestamps_in_file.configure(state=tkinter.DISABLED)
+            # upload_file_button.configure(state=tkinter.DISABLED)
         else:
             timestamps_in_desc.configure(state=tkinter.NORMAL)
             timestamps_in_file.configure(state=tkinter.NORMAL)
+            # upload_file_button.configure(state=tkinter.DISABLED)
 
             if check_timestamps_in_file_var.get():
                 timestamps_in_desc.configure(state=tkinter.DISABLED)
                 timestamps_in_comments.configure(state=tkinter.DISABLED)
+                # upload_file_button.configure(state=tkinter.NORMAL)
             else:
                 timestamps_in_desc.configure(state=tkinter.NORMAL)
                 timestamps_in_comments.configure(state=tkinter.NORMAL)
+                # upload_file_button.configure(state=tkinter.NORMAL)
 
         
 def submit():
@@ -113,27 +134,38 @@ label.pack(padx=10, pady=10)
 recording_date = customtkinter.CTkEntry(app, width=350, height=40)
 recording_date.pack(padx=10)
 
+# Create a frame to hold the widgets
+frame = customtkinter.CTkFrame(app, width=350, height=40, fg_color=app._fg_color)
+frame.pack(padx=0, pady=15)
+
 # Timestamps in description check box
 check_timestamps_in_desc_var = customtkinter.BooleanVar(value=False)
-timestamps_in_desc = customtkinter.CTkCheckBox(app, text='There is timestamps in video description?', command=checkbox_event,
+timestamps_in_desc = customtkinter.CTkCheckBox(frame, text='There is timestamps in video description?', command=checkbox_event,
                                               variable=check_timestamps_in_desc_var, onvalue="on", offvalue="off")
-timestamps_in_desc.pack(padx=1, pady=20)
+timestamps_in_desc.grid(row=0, column=0, padx=(1, 0), pady=10)
 
 # Timestamps in comments check box
 check_timestamps_in_comments_var = customtkinter.BooleanVar(value=False)
-timestamps_in_comments = customtkinter.CTkCheckBox(app, text='There is timestamps in video comments?', command=checkbox_event, 
+timestamps_in_comments = customtkinter.CTkCheckBox(frame, text='There is timestamps in video comments?', command=checkbox_event, 
                                               variable=check_timestamps_in_comments_var, onvalue="on", offvalue="off")
-timestamps_in_comments.pack(padx=1, pady=1)
+timestamps_in_comments.grid(row=1, column=0, pady=10)
 
-# Timestamps in file check box
+# # Timestamps in file check box
 check_timestamps_in_file_var = customtkinter.BooleanVar(value=False)
-timestamps_in_file = customtkinter.CTkCheckBox(app, text='There is timestamps in file?', command=checkbox_event, 
+timestamps_in_file = customtkinter.CTkCheckBox(frame, text='There is timestamps in file?', command=checkbox_event, 
                                               variable=check_timestamps_in_file_var, onvalue="on", offvalue="off")
-timestamps_in_file.pack(padx=1, pady=1)
+timestamps_in_file.grid(row=2, column=0, padx=(0, 80), pady=10)
+
+# Upload button
+upload_file_button = customtkinter.CTkButton(frame, text='Upload', command=upload_file, width=40, height=30)
+# button.pack(padx=1, pady=1)
+upload_file_button.grid(row=2, column=1, padx=(0, 30))
 
 # Download button
 button = customtkinter.CTkButton(app, text='Download', command=submit, width=350, height=40)
 button.pack(padx=20, pady=20)
+
+disable_upload_file()
 
 # Run app
 app.mainloop()

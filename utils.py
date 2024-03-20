@@ -33,7 +33,7 @@ def export_data(start_times, titles, end_times, video_length):
 
         return chapters_data
 
-def split_line_to_data(line, video_length):
+def split_line_to_data(line, time_pattern, match, video_length): 
     # Initialize lists to store times and titles
     start_times = []
     titles = []
@@ -41,16 +41,26 @@ def split_line_to_data(line, video_length):
 
     # Split line into start time and title
     parts = line.split(' ')
-    start_time = parts[0].strip()
-    str = " "
-    title = str.join(parts[1:]).title()
-    
-    if len(start_time) == 4:
-        start_time = f"00:0{start_time}"
-    if len(start_time) == 5:
-        start_time = f"00:{start_time}"
-    if len(start_time) == 7:
-        start_time = f"0{start_time}"
+
+    for item in reversed(parts):
+        if item == '':
+        # Remove the item from the list
+            parts.remove(item)
+
+    match = re.findall(time_pattern, parts[0]) 
+    if match:
+        start_time = parts[0]    
+        title = ' '.join(parts[1:]).title()
+    else:
+        start_time = parts[-1]
+        title = ' '.join(parts[:-1]).title()
+
+        if len(start_time) == 4:
+            start_time = f"00:0{start_time}"
+        if len(start_time) == 5:
+            start_time = f"00:{start_time}"
+        if len(start_time) == 7:
+            start_time = f"0{start_time}"
 
     # # Append start time and title to lists
     start_times.append(start_time)
@@ -80,20 +90,30 @@ def create_chapters_data(text_content, video_length, type):
     titles = []
     end_times = []
     # Split text into lines
+    # lines = text_content.strip()
     lines = text_content.strip().split('\n')
 
     if type == 'text_file':
         # Define regex pattern to match time stamps
-        time_pattern_1 = re.compile(r"\d+:\d+")
+        # time_pattern_1 = re.compile(r"\d+:\d+")
         time_pattern_2 = re.compile(r"\d+:\d+:\d+")
     
         for line in lines:
+            time_pattern_2 = re.compile(r"\d+:\d+:\d+")
         # Search for time stamps in the line
-            matches = re.findall(time_pattern_1, line) or re.findall(time_pattern_2, line)
-            if matches:
-                data = split_line_to_data(line, video_length)
+            matches_2 = re.findall(time_pattern_2, line)
+            
+            if matches_2:
+                data = split_line_to_data(line, time_pattern_2, matches_2, video_length)
                 start_times.append(data['start_time'])
                 titles.append(data['title'])
+            else:
+                time_pattern_1 = re.compile(r"\d+:\d+")
+                matches_1 = re.findall(time_pattern_1, line)
+                if matches_1:
+                    data = split_line_to_data(line, time_pattern_1, matches_1, video_length)
+                    start_times.append(data['start_time'])
+                    titles.append(data['title'])
 
         chapters_data = export_data(start_times, titles, end_times, video_length)
         return chapters_data
@@ -156,3 +176,18 @@ def create_audio(artist_name, album_name, recording_date, video_path):
     audio_clip.write_audiofile(os.path.join(folder_name, f'{title}.mp3'))
 
     # add_tags(folder_name, album_name, artist_name, recording_date)
+
+def get_video_id(video_url):
+    video_id = ''
+    
+    # Regular expression pattern to match YouTube video IDs
+    pattern = r"(?<=v=)[a-zA-Z0-9_-]+(?=&|$)"
+
+    # Search for the video ID in the URL
+    match = re.search(pattern, video_url)
+
+    # If a match is found, set the video ID
+    if match:
+        video_id = match.group(0)
+        
+    return video_id

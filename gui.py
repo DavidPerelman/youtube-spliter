@@ -73,7 +73,6 @@ def submit():
         # Extract timestamps from video response:
         description = video_response['items'][0]['snippet']['description']
         description_video_timestamps = create_chapters_data(description, video_length, 'text_file')
-        # start_run(video_url, description_video_timestamps, 'Live At Southside Music Festival', 'Twenty One Pilots', 2022)
         start_run(video_id, description_video_timestamps, album_name.get(), artist_name.get(), recording_date.get())
     elif check_timestamps_in_comments_var.get() == True:
         # Extract data from response:

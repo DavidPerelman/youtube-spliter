@@ -1,7 +1,11 @@
 import os
 from download_video import startDownload
-from utils import add_tags, create_audio, split_audio_files
+# from run_app import run_app
+from utils import add_tags, create_audio, create_chapters_data, split_audio_files
 from langdetect import detect
+
+from yt_api import get_video_data
+from yt_api_utils import extract_video_duration, extract_video_timestamps_from_comments
 
 software_path = os.getcwd()
 
@@ -49,3 +53,45 @@ def start_run(video_url, video_timestamps, album_name, artist_name, recording_da
     except OSError:
         # Ignore OSError
         pass
+
+video_url = 'https://www.youtube.com/watch?v=DWt4TlfOfjc'
+album_name = 'Live (The We Meaning You Tour)'
+artist_name = 'Sia'
+recording_date = 2010
+filepath = r"C:\Users\dpere\Documents\python-projects\youtube-spliter\chapters_files\Sia - Live (The We Meaning You Tour) (2010).txt"
+type = 'timestamps_in_file'
+
+if type == 'timestamps_in_desc':
+    # Extract data from response:
+    video_response = get_video_data(video_url, 'description')
+
+    # Extract duration from video data:
+    video_length = extract_video_duration(video_response)
+
+    # Extract timestamps from video response:
+    description = video_response['items'][0]['snippet']['description']
+    description_video_timestamps = create_chapters_data(description, video_length, 'text_file')
+    start_run(video_url, description_video_timestamps, album_name, artist_name, recording_date)
+elif type == 'timestamps_in_comments':
+    # Extract data from response:
+    comments_response = get_video_data(video_url, 'comments')
+    duration_response = get_video_data(video_url, 'description')
+
+    # Extract duration from video data:
+    video_length = extract_video_duration(duration_response)
+
+    # Extract timestamps from response:
+    comments_video_timestamps = extract_video_timestamps_from_comments(comments_response, video_length)
+            
+    # start_run(video_url, comments_video_timestamps, album_name, artist_name, recording_date)
+elif type == 'timestamps_in_file':
+    # # Extract duration from text file:
+    video_response = get_video_data(video_url, 'description')
+    video_length = extract_video_duration(video_response)
+
+    # Extract timestamps from text file:
+    file_content = open(f"{filepath}", "r").read()
+    text_file_video_timestamps = create_chapters_data(file_content, video_length, 'text_file')
+    start_run(video_url, text_file_video_timestamps, album_name, artist_name, recording_date)
+# else:
+    # start_run(video_url, [], 'aaa', 'aaa', 1975)
